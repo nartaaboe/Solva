@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-limit-table
+      author: Nartai
+      changes:
+        - createTable:
+            tableName: limits
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: limit_sum
+                  type: DECIMAL(19, 4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: limit_date_time
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expiration_date_time
+                  type: DATE
+              - column:
+                  name: expense_category
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: limit_currency_shortname
+                  type: VARCHAR(10)
+                  constraints:
+                    nullable: false

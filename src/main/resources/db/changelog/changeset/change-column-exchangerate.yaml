@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-column-exchangerate-2
+      author: Nartai
+      changes:
+        - addAutoIncrement:
+            columnName: id
+            tableName: exchangerates
+            columnDataType: BIGINT

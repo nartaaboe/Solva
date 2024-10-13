@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-column-date
+      author: Nartai
+      changes:
+        - modifyDataType:
+            tableName: limits
+            columnName: limit_date_time
+            newDataType: timestamp with time zone
+        - modifyDataType:
+            tableName: limits
+            columnName: expiration_date_time
+            newDataType: timestamp with time zone
+        - modifyDataType:
+            tableName: transactions
+            columnName: transaction_date_time
+            newDataType: timestamp with time zone
+        - modifyDataType:
+            tableName: exchangerates
+            columnName: date_time
+            newDataType: timestamp with time zone
