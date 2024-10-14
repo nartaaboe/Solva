@@ -35,16 +35,17 @@
 ## Запустите PostgreSQL с помощью Docker Compose:
 docker-compose up -d
 
-Убедитесь, что все зависимости установлены:
+## Убедитесь, что все зависимости установлены:
 ./mvnw clean install
 
+## Запуск
 ./mvnw spring-boot:run
 
 Для просмотра документации Swagger перейдите по ссылке:
 http://localhost:8080/swagger-ui/index.html
 
-Примеры запросов
-1. Получение текущего лимита по категории (продукты и сервисы)
+## Примеры запросов
+## 1. Получение текущего лимита по категории (продукты и сервисы)
 GET /api/limit?expenseCategory=products
 ответ:
    {
@@ -55,16 +56,19 @@ GET /api/limit?expenseCategory=products
    "expenseCategory": "products",
    "limitCurrencyShortname": "USD"
    }
-2. Создание нового лимита для категории
+## 2. Создание нового лимита для категории
 POST /api/limit
 Тело запроса:
+```
    {
    "limitSum": 500.0,
    "expenseCategory": "services",
    "limitCurrencyShortname": "USD"
    }
-3. Снятие лимита с категории
+```
+## 3. Снятие лимита с категории
 DELETE /api/limit?expenseCategory=products
+```
    {
    "id": 0,
    "limitSum": 0,
@@ -73,10 +77,12 @@ DELETE /api/limit?expenseCategory=products
    "expenseCategory": "string",
    "limitCurrencyShortname": "string"
    }
+```
 в expirationDateTime устанавливается текущее время и так оно убирается но не удаляется с дб
-4. Создание транзакции
+## 4. Создание транзакции
 POST /api/transaction
 Тело запроса:
+```
    {
    "accountFrom": "accountA",
    "accountTo": "accountB",
@@ -84,7 +90,9 @@ POST /api/transaction
    "sum": 400000.0,
    "expenseCategory": "products"
    }
+```
 ответ:
+```
    {
    "id": 1,
    "accountFrom": "accountA",
@@ -96,9 +104,11 @@ POST /api/transaction
    "transactionDateTime": "2024-10-13T23:44:59.278Z",
    "limitExceeded": false
    }
-5. Получить транзакции превышающий лимит
+```
+## 5. Получить транзакции превышающий лимит
 GET /api/transaction/exceeding-limit?expenseCategory=services
 ответ:
+```
 [
    {
    "id": 1,
@@ -123,3 +133,4 @@ GET /api/transaction/exceeding-limit?expenseCategory=services
    "limitExceeded": true
    }
 ]
+```
