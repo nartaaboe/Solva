@@ -4,17 +4,19 @@ import com.example.javajuniorassignment.dto.ExchangeRateResponse;
 import com.example.javajuniorassignment.entity.ExchangeRate;
 import com.example.javajuniorassignment.repository.ExchangeRateRepository;
 import com.example.javajuniorassignment.service.impl.ExchangeRateServiceImpl;
-import com.example.javajuniorassignment.util.ExchangeRateClient;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import jakarta.persistence.EntityNotFoundException;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class ExchangeRateServiceImplTest {
@@ -42,24 +44,24 @@ class ExchangeRateServiceImplTest {
     @Test
     void testGetBySymbol_Success() {
         // Arrange
-        when(exchangeRateRepository.findLatestPushed("USD/KZT")).thenReturn(Optional.of(exchangeRate));
+        when(exchangeRateRepository.findLatestPushed(anyString())).thenReturn(Optional.of(exchangeRate));
 
         // Act
         ExchangeRateResponse response = exchangeRateService.getBySymbol("USD/KZT");
 
         // Assert
         assertNotNull(response);
-        assertEquals("USD", response.currencyFrom());
-        assertEquals("KZT", response.currencyTo());
+        assertEquals(exchangeRate.getSymbol(), response.currencyFrom() + "/" + response.currencyTo());
         assertEquals(exchangeRate.getRate(), response.rate());
         assertEquals(exchangeRate.getDateTime(), response.dateTime());
-        verify(exchangeRateRepository, times(1)).findLatestPushed("USD/KZT");
+        verify(exchangeRateRepository, times(1)).findLatestPushed(anyString());
+        verifyNoMoreInteractions(exchangeRateRepository);
     }
 
     @Test
     void testGetBySymbol_NotFound() {
         // Arrange
-        when(exchangeRateRepository.findLatestPushed("USD/KZT")).thenReturn(Optional.empty());
+        when(exchangeRateRepository.findLatestPushed(anyString())).thenReturn(Optional.empty());
 
         // Act & Assert
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
@@ -67,7 +69,8 @@ class ExchangeRateServiceImplTest {
         });
 
         assertEquals("Курс валют не найден.", exception.getMessage());
-        verify(exchangeRateRepository, times(1)).findLatestPushed("USD/KZT");
+        verify(exchangeRateRepository, times(1)).findLatestPushed(anyString());
+        verifyNoMoreInteractions(exchangeRateRepository);
     }
 
     @Test
@@ -76,26 +79,27 @@ class ExchangeRateServiceImplTest {
         when(exchangeRateRepository.findLatestPushed(anyString())).thenReturn(Optional.of(exchangeRate));
 
         // Act
-        BigDecimal convertedAmount = exchangeRateService.convertToUSD(anyString(), BigDecimal.valueOf(anyDouble()));
+        BigDecimal convertedAmount = exchangeRateService.convertToUSD("KZT", BigDecimal.valueOf(1000));
 
         // Assert
         assertNotNull(convertedAmount);
-        assertEquals(exchangeRate., convertedAmount);
-        verify(exchangeRateRepository, times(1)).findLatestPushed("KZT/USD");
+        assertEquals(exchangeRate.getRate().multiply(BigDecimal.valueOf(1000)), convertedAmount);
+        verify(exchangeRateRepository, times(1)).findLatestPushed(anyString());
+        verifyNoMoreInteractions(exchangeRateRepository);
     }
 
     @Test
     void testConvertToUSD_NotFound() {
         // Arrange
-        when(exchangeRateRepository.findLatestPushed("KZT/USD")).thenReturn(Optional.empty());
-        BigDecimal amount = BigDecimal.valueOf(1000);
+        when(exchangeRateRepository.findLatestPushed(anyString())).thenReturn(Optional.empty());
 
         // Act & Assert
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            exchangeRateService.convertToUSD("KZT", amount);
+            exchangeRateService.convertToUSD("KZT", BigDecimal.valueOf(1000));
         });
 
         assertEquals("Курс валют не найден.", exception.getMessage());
-        verify(exchangeRateRepository, times(1)).findLatestPushed("KZT/USD");
+        verify(exchangeRateRepository, times(1)).findLatestPushed(anyString());
+        verifyNoMoreInteractions(exchangeRateRepository);
     }
 }

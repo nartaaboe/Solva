@@ -24,4 +24,5 @@ public class Limit {
     private LocalDateTime expirationDateTime;
     private String expenseCategory;
     private String limitCurrencyShortname;
+
 }

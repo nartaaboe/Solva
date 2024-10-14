@@ -24,4 +24,10 @@ public class ExchangeRate {
     private BigDecimal rate;
     private Long timestamp;
     private LocalDateTime dateTime;
+
+    public ExchangeRate(Long id, String symbol, BigDecimal rate) {
+        this.id = id;
+        this.symbol = symbol;
+        this.rate = rate;
+    }
 }
